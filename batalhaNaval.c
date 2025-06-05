@@ -1,81 +1,106 @@
 #include <stdio.h>
+#include <stdlib.h>  // Para abs()
+
+#define TAMANHO_TABULEIRO 10
+#define TAM_HAB 5
+
+// Desenha o cone 
+void desenharCone(int matriz[TAM_HAB][TAM_HAB]) {
+  
+    int centro = TAM_HAB / 2;
+
+    for(int i=0; i<TAM_HAB; i++) {
+        for(int j=0; j<TAM_HAB; j++) {
+    
+            if(j >= centro - i && j <= centro + i && i <= centro + 1) {
+                matriz[i][j] = 1;
+            } else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+}
+
+// Desenha o octaedro com valores 2
+void desenharOctaedro(int matriz[TAM_HAB][TAM_HAB]) {
+    // Octaedro: losango com valores 2
+    int centro = TAM_HAB / 2;
+
+    for(int i=0; i<TAM_HAB; i++) {
+        int distancia = abs(centro - i);
+        for(int j=0; j<TAM_HAB; j++) {
+            // Preenche '2' formando o losango central
+            if(j >= distancia && j < TAM_HAB - distancia) {
+                matriz[i][j] = 2;
+            } else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+}
+
+// Desenha a cruz com valores 3 no formato cruz
+void desenharCruz(int matriz[TAM_HAB][TAM_HAB]) {
+    
+    int centro = TAM_HAB / 2;
+
+    for(int i=0; i<TAM_HAB; i++) {
+        for(int j=0; j<TAM_HAB; j++) {
+            if(i == centro || j == centro) {
+                matriz[i][j] = 3;
+            } else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+}
+
+// aplica a "habilidade" no tabuleiro na posição (centro_linha, centro_coluna)
+void aplicarHabilidade(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int habilidade[TAM_HAB][TAM_HAB], int centro_linha, int centro_coluna) {
+    int offset = TAM_HAB / 2;
+
+    for(int i=0; i<TAM_HAB; i++) {
+        for(int j=0; j<TAM_HAB; j++) {
+            int linha_tab = centro_linha - offset + i;
+            int coluna_tab = centro_coluna - offset + j;
+
+            if(linha_tab >= 0 && linha_tab < TAMANHO_TABULEIRO &&
+               coluna_tab >= 0 && coluna_tab < TAMANHO_TABULEIRO &&
+               habilidade[i][j] != 0) {
+                tabuleiro[linha_tab][coluna_tab] = habilidade[i][j];
+            }
+        }
+    }
+}
 
 int main() {
-    char linha[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-    int tabuleiro[10][10];
+    int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO] = {0};
+    int cone[TAM_HAB][TAM_HAB], cruz[TAM_HAB][TAM_HAB], octaedro[TAM_HAB][TAM_HAB];
 
-    // Inicializa tabuleiro com zeros
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
-            tabuleiro[i][j] = 0;
-        }
-    }
+    // define a matriz colunas
+    char linha[10] = {'A','B','C','D','E','F','G','H','I','J'};
 
-    // Declara navios e suas posições
-    int navioH[3] = {3, 3, 3}; // Navio horizontal
-    int navioV[3] = {3, 3, 3}; // Navio vertical
+    // Desenha as "habilidades"
+    desenharCone(cone);
+    desenharCruz(cruz);
+    desenharOctaedro(octaedro);
 
-    // Coordenadas
-    int linhaH = 1; // linha B
-    int colunaH = 2; // começa na coluna 2
+    // Aplica habilidadess
+    aplicarHabilidade(tabuleiro, cruz, 2, 3);     
+    aplicarHabilidade(tabuleiro, cone, 6, 2);      
+    aplicarHabilidade(tabuleiro, octaedro, 4, 7);  
 
-    int linhaV = 4; // linha E
-    int colunaV = 5; // começa na coluna 5
-
-    // Posiciona navio horizontal no tabuleiro
-    for (int i = 0; i < 3; i++) {
-        tabuleiro[linhaH][colunaH + i] = navioH[i];
-    }
-
-    // Posiciona navio vertical no tabuleiro
-    for (int i = 0; i < 3; i++) {
-        tabuleiro[linhaV + i][colunaV] = navioV[i];
-    }
-
-      // insere o navio 1 da diagonal
-
-    int linhaD1 = 0; // começa na linha A
-    int colunaD1 = 0; // começa na coluna 0
-
-    // verifica se está dentro do tabuleiro e sem sobrepor outro antes de posicionar
-    if (linhaD1 + 2 < 10 && colunaD1 + 2 < 10) {
-        if (tabuleiro[linhaD1][colunaD1] == 0 &&
-            tabuleiro[linhaD1 + 1][colunaD1 + 1] == 0 &&
-            tabuleiro[linhaD1 + 2][colunaD1 + 2] == 0) {
-            
-            for (int i = 0; i < 3; i++) {
-                tabuleiro[linhaD1 + i][colunaD1 + i] = 3;
-            }
-        }
-    }
-
-    // insere o navio 2 da diagonal
-    int linhaD2 = 0; // linha A
-    int colunaD2 = 9; //  coluna 9
-
-    // verifica se está dentro do tabuleiro e sem sobrepor antes de posicionar
-    if (linhaD2 + 2 < 10 && colunaD2 - 2 >= 0) {
-        if (tabuleiro[linhaD2][colunaD2] == 0 &&
-            tabuleiro[linhaD2 + 1][colunaD2 - 1] == 0 &&
-            tabuleiro[linhaD2 + 2][colunaD2 - 2] == 0) {
-            
-            for (int i = 0; i < 3; i++) {
-                tabuleiro[linhaD2 + i][colunaD2 - i] = 3;
-            }
-        }
-    }
-
-    // Imprime o cabeçalho das colunas
+    // Imprime as colunas
     printf("   ");
-    for (int j = 0; j < 10; j++) {
-        printf("%d ", j);
+    for(int i=0; i<TAMANHO_TABULEIRO; i++) {
+        printf("%c ", linha[i]);
     }
     printf("\n");
 
-    // Imprime o tabuleiro com letras das linhas
-    for (int i = 0; i < 10; i++) {
-        printf("%c  ", linha[i]);
-        for (int j = 0; j < 10; j++) {
+    // Imprime o tabuleiro 
+    for(int i=0; i<TAMANHO_TABULEIRO; i++) {
+        printf("%d  ", i);
+        for(int j=0; j<TAMANHO_TABULEIRO; j++) {
             printf("%d ", tabuleiro[i][j]);
         }
         printf("\n");
