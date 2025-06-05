@@ -32,6 +32,39 @@ int main() {
         tabuleiro[linhaV + i][colunaV] = navioV[i];
     }
 
+      // insere o navio 1 da diagonal
+
+    int linhaD1 = 0; // começa na linha A
+    int colunaD1 = 0; // começa na coluna 0
+
+    // verifica se está dentro do tabuleiro e sem sobrepor outro antes de posicionar
+    if (linhaD1 + 2 < 10 && colunaD1 + 2 < 10) {
+        if (tabuleiro[linhaD1][colunaD1] == 0 &&
+            tabuleiro[linhaD1 + 1][colunaD1 + 1] == 0 &&
+            tabuleiro[linhaD1 + 2][colunaD1 + 2] == 0) {
+            
+            for (int i = 0; i < 3; i++) {
+                tabuleiro[linhaD1 + i][colunaD1 + i] = 3;
+            }
+        }
+    }
+
+    // insere o navio 2 da diagonal
+    int linhaD2 = 0; // linha A
+    int colunaD2 = 9; //  coluna 9
+
+    // verifica se está dentro do tabuleiro e sem sobrepor antes de posicionar
+    if (linhaD2 + 2 < 10 && colunaD2 - 2 >= 0) {
+        if (tabuleiro[linhaD2][colunaD2] == 0 &&
+            tabuleiro[linhaD2 + 1][colunaD2 - 1] == 0 &&
+            tabuleiro[linhaD2 + 2][colunaD2 - 2] == 0) {
+            
+            for (int i = 0; i < 3; i++) {
+                tabuleiro[linhaD2 + i][colunaD2 - i] = 3;
+            }
+        }
+    }
+
     // Imprime o cabeçalho das colunas
     printf("   ");
     for (int j = 0; j < 10; j++) {
